@@ -1934,7 +1934,7 @@ function (_Emitter) {
         _this7._updateMaxFilesReachedClass();
       });
 
-      var reader = new FileReader();
+      // var reader = new FileReader();
       var a = $('a', $(file.previewElement));
       // Encrypt the file!
 
@@ -1942,26 +1942,42 @@ function (_Emitter) {
         _this7.emit("uploadprogress", file, progress, 0);
       };
 
-      reader.onload = function(e){
+      // ==============================
 
-        var options = { level: 9, 
-          name: file.name,
-          timestamp: parseInt(Date.now() / 1000, 10)
-          };
-        // var input_source = e.target.result.split ('').map (function (c) { return c.charCodeAt (0); })
-        var out = zip(e.target.result, options);
-        out = _arrayBufferToBase64(out);
-        out = 'data:application/octet-stream;base64,' + out;
+      var image_compression_options = {
+        maxSizeMB: 100,
+        maxWidthOrHeight: 123456789,
+        useWebWorker: true
+      }
 
-        a.attr('href', out);
-        a.attr('download', file.name + '.gz');
+      imageCompression(file, image_compression_options)
+        .then(function (compressedFile) {
+          // debugger;
+          console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
+          console.log(`compressedFile ratio ${(1 - compressedFile.size / file.size) * 100}%`); // smaller than maxSizeMB
 
-        a.text('download');
-        a.addClass('completed');
-        _this7.emit("success", file);
-        _this7.emit("complete", file);
-      };
-      reader.readAsBinaryString(file);
+          var out = '';
+          out = _arrayBufferToBase64(out);
+          out = 'data:application/octet-stream;base64,' + out;
+
+          a.attr('href', window.URL.createObjectURL(compressedFile));
+          a.attr('download', file.name);
+
+          a.text('download');
+          a.addClass('completed');
+
+          // return uploadToServer(compressedFile); // write your own logic
+        })
+        .catch(function (error) {
+          console.log(error.message);
+          a.text('failed');
+          a.addClass('failed');
+        });
+
+      // ==============================
+      _this7.emit("success", file);
+      _this7.emit("complete", file);
+
     } // Wrapper for enqueueFile
 
   }, {
