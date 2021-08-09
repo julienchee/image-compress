@@ -10,6 +10,74 @@ function _arrayBufferToBase64( buffer ) {
     return window.btoa( binary );
 }
 
+async function finalCompress(file) {
+  // ==============================
+  var a = $('a', $(file.previewElement));
+
+  var image_compression_options = {
+    maxSizeMB: 100,
+    maxWidthOrHeight: 123456789,
+    useWebWorker: true,
+    maxIteration: 10
+  }
+
+  let stateFailed = false;
+  let stateShouldRepeat = false;
+  let beforeCompressedFile = file;
+
+  for (let i = 0; i < 100; i++) {
+    try {
+      const compressedFile = await imageCompression(beforeCompressedFile, image_compression_options);
+
+      if ((1 - compressedFile.size / beforeCompressedFile.size) > 0.000001) {
+        stateShouldRepeat = true;
+      } else {
+        stateShouldRepeat = false;
+      }
+
+      beforeCompressedFile = compressedFile;
+    } catch (error) {
+      console.log(error.message);
+      stateFailed = true;
+    }
+
+    // imageCompression(beforeCompressedFile, image_compression_options)
+    // .then(function (compressedFile) {
+
+    //   if ((1 - compressedFile.size / beforeCompressedFile.size) > 0.0001) {
+    //     stateShouldRepeat = true;
+    //   } else {
+    //     stateShouldRepeat = false;
+    //   }
+    //   debugger;
+    //   beforeCompressedFile = compressedFile;
+    // })
+    // .catch(function (error) {
+    //   console.log(error.message);
+    //   stateFailed = true;
+    // });
+
+    if (stateShouldRepeat == false) {
+      break;
+    }
+  }
+
+  if (stateFailed) {
+    a.text('failed');
+    a.addClass('failed');
+  } else {
+    a.attr('href', window.URL.createObjectURL(beforeCompressedFile));
+    a.attr('download', file.name);
+
+    a.text('download');
+    a.addClass('completed');
+
+    $(file.previewElement).attr('data-compressed-ratio', Math.round((1 - beforeCompressedFile.size / file.size) * 10000) / 100.0);
+  }
+
+  // ==============================
+}
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
@@ -1934,52 +2002,81 @@ function (_Emitter) {
         _this7._updateMaxFilesReachedClass();
       });
 
-      // var reader = new FileReader();
-      var a = $('a', $(file.previewElement));
-      // Encrypt the file!
 
       var cprogress = function(progress) {
         _this7.emit("uploadprogress", file, progress, 0);
       };
 
-      // ==============================
-
-      var image_compression_options = {
-        maxSizeMB: 100,
-        maxWidthOrHeight: 123456789,
-        useWebWorker: true,
-        maxIteration: 10
-      }
-
-      imageCompression(file, image_compression_options)
-        .then(function (compressedFile) {
-          // debugger;
-          // console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
-          // console.log(`compressedFile ratio ${(1 - compressedFile.size / file.size) * 100}%`); // smaller than maxSizeMB
-
-          var out = '';
-          out = _arrayBufferToBase64(out);
-          out = 'data:application/octet-stream;base64,' + out;
-
-          a.attr('href', window.URL.createObjectURL(compressedFile));
-          a.attr('download', file.name);
-
-          a.text('download');
-          a.addClass('completed');
-
-          $(file.previewElement).attr('data-compressed-ratio', Math.round((1 - compressedFile.size / file.size) * 10000) / 100.0);
-
-          // return uploadToServer(compressedFile); // write your own logic
-        })
-        .catch(function (error) {
-          console.log(error.message);
-          a.text('failed');
-          a.addClass('failed');
-        });
-
-      // ==============================
       _this7.emit("success", file);
       _this7.emit("complete", file);
+
+      finalCompress(file);
+
+      // // ==============================
+      // var a = $('a', $(file.previewElement));
+
+      // var image_compression_options = {
+      //   maxSizeMB: 100,
+      //   maxWidthOrHeight: 123456789,
+      //   useWebWorker: true,
+      //   maxIteration: 10
+      // }
+
+      // let stateFailed = false;
+      // let stateShouldRepeat = false;
+      // let beforeCompressedFile = file;
+
+      // for (let i = 0; i < 100; i++) {
+      //   try {
+      //     const compressedFile = await imageCompression(beforeCompressedFile, image_compression_options);
+
+      //     if ((1 - compressedFile.size / beforeCompressedFile.size) > 0.0001) {
+      //       stateShouldRepeat = true;
+      //     } else {
+      //       stateShouldRepeat = false;
+      //     }
+
+      //     beforeCompressedFile = compressedFile;
+      //   } catch (error) {
+      //     console.log(error.message);
+      //     stateFailed = true;
+      //   }
+
+      //   // imageCompression(beforeCompressedFile, image_compression_options)
+      //   // .then(function (compressedFile) {
+
+      //   //   if ((1 - compressedFile.size / beforeCompressedFile.size) > 0.0001) {
+      //   //     stateShouldRepeat = true;
+      //   //   } else {
+      //   //     stateShouldRepeat = false;
+      //   //   }
+      //   //   debugger;
+      //   //   beforeCompressedFile = compressedFile;
+      //   // })
+      //   // .catch(function (error) {
+      //   //   console.log(error.message);
+      //   //   stateFailed = true;
+      //   // });
+
+      //   if (stateShouldRepeat == false) {
+      //     break;
+      //   }
+      // }
+
+      // if (stateFailed) {
+      //   a.text('failed');
+      //   a.addClass('failed');
+      // } else {
+      //   a.attr('href', window.URL.createObjectURL(beforeCompressedFile));
+      //   a.attr('download', file.name);
+
+      //   a.text('download');
+      //   a.addClass('completed');
+
+      //   $(file.previewElement).attr('data-compressed-ratio', Math.round((1 - beforeCompressedFile.size / file.size) * 10000) / 100.0);
+      // }
+
+      // ==============================
 
     } // Wrapper for enqueueFile
 
