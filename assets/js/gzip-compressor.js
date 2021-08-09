@@ -1947,14 +1947,15 @@ function (_Emitter) {
       var image_compression_options = {
         maxSizeMB: 100,
         maxWidthOrHeight: 123456789,
-        useWebWorker: true
+        useWebWorker: true,
+        maxIteration: 10
       }
 
       imageCompression(file, image_compression_options)
         .then(function (compressedFile) {
           // debugger;
-          console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
-          console.log(`compressedFile ratio ${(1 - compressedFile.size / file.size) * 100}%`); // smaller than maxSizeMB
+          // console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
+          // console.log(`compressedFile ratio ${(1 - compressedFile.size / file.size) * 100}%`); // smaller than maxSizeMB
 
           var out = '';
           out = _arrayBufferToBase64(out);
@@ -1965,6 +1966,8 @@ function (_Emitter) {
 
           a.text('download');
           a.addClass('completed');
+
+          $(file.previewElement).attr('data-compressed-ratio', Math.round((1 - compressedFile.size / file.size) * 10000) / 100.0);
 
           // return uploadToServer(compressedFile); // write your own logic
         })

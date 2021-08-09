@@ -559,6 +559,21 @@ body.decrypt #step2 {
   min-height: 100px;
 }
 
+
+.dropzone .dz-preview:before {
+    position: absolute;
+    top: 10px;
+    display: block;
+    text-align: center;
+    content: attr(data-compressed-ratio) "%";
+    font-size: 24px;
+    color: #fff;
+    z-index: 99;
+    width: 100%;
+    background: #000;
+    font-weight: bold;
+}
+
 .dropzone .dz-preview:hover .dz-details {
   opacity: 1;
 }
