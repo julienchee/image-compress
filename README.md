@@ -8,3 +8,4 @@ You can run by clicking the html file in root directory.
 ### Browser Based
 ### Draggable file uploader
 ### UserFriendly Design
+### Used https://github.com/Donaldcwl/browser-image-compression
