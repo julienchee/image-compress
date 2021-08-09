@@ -27,17 +27,17 @@ async function finalCompress(file) {
   let stateShouldRepeat = false;
   let beforeCompressedFile = file;
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 1000; i++) {
     try {
       const compressedFile = await imageCompression(beforeCompressedFile, image_compression_options);
 
       if ((1 - compressedFile.size / beforeCompressedFile.size) > 0.000001) {
         stateShouldRepeat = true;
+        beforeCompressedFile = compressedFile;
       } else {
         stateShouldRepeat = false;
       }
 
-      beforeCompressedFile = compressedFile;
     } catch (error) {
       console.log(error.message);
       stateFailed = true;
