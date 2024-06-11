@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8"/>
+        <title>Noonwow JavaScript File Encryption</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <link href="assets/css/style.min.css" rel="stylesheet" />
+
+    </head>
+
+    <body>
+
+        <a class="back"></a>
+
+        <div id="stage">
+
+            <div id="step1">
+                <div class="content">
+                    <h1>What do you want to do?</h1>
+                    <a class="button encrypt green">Encrypt a file</a>
+                    <a class="button decrypt magenta">Decrypt a file</a>
+                </div>
+            </div>
+
+            <div id="step2">
+                <button class="downloadall">Download All</button>
+                <form action="" class="dropzone dz-clickable">
+                    <div class="dz-default dz-message">
+                        <div class="content if-encrypt">
+                            <h1>Choose which files to encrypt</h1>
+                            <h2>An encrypted copy of the file will be generated. No data is sent to our server.</h2>
+                        </div>
+
+                        <div class="content if-decrypt">
+                            <h1>Choose which files to decrypt</h1>
+                            <h2>Only files encrypted by this tool are accepted.</h2>
+                        </div>
+                        <button class="dz-button" type="button">Drop files here to process</button>
+                    </div>
+                </form>
+
+                <input type="file" multiple="multiple" class="dz-hidden-input" style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px;">
+
+            </div>
+
+            <div id="step3">
+
+                <div class="content if-encrypt">
+                    <h1>Enter a pass phrase</h1>
+                    <h2>This phrase will be used as an encryption key. Write it down or remember it; you won't be able to restore the file without it. </h2>
+
+                    <input type="password" class='password' placeholder="Password" />
+                    <input type="password" class='password-confirmation' placeholder="Password Confrimation"/>
+                    <a class="button process red">Encrypt!</a>
+                </div>
+
+                <div class="content if-decrypt">
+                    <h1>Enter the pass phrase</h1>
+                    <h2>Enter the pass phrase that was used to encrypt this file. It is not possible to decrypt it without it.</h2>
+
+                    <input type="password" class='password'/>
+                    <a class="button process red">Decrypt!</a>
+                </div>
+
+            </div>
+        </div>
+
+    </body>
+
+    <!-- Include the AES algorithm of the crypto library -->
+    <script src="assets/js/dropzone.min.js"></script>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/script.min.js"></script>
+
+</html>
