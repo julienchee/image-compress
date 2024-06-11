@@ -6,6 +6,9 @@ You can run by clicking the html file in root directory.
 ## You can see live site
 https://julienchee.github.io/image-compress/
 
+## For Encryption and Decryption
+https://julienchee.github.io/image-compress/encryptor
+
 ## Features
 - Browser Based
 - Draggable file uploader
